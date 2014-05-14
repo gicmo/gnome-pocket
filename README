@@ -1,0 +1,7 @@
+gnome-pocket is a copy/paste library to interface with
+the Pocket web service:
+https://en.wikipedia.org/wiki/Pocket_(application)
+
+It requires:
+- json-glib and librest for the web service interaction
+- gom for the local database caching
