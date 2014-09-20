@@ -39,11 +39,11 @@ enum {
   PROP_AVAILABLE
 };
 
-G_DEFINE_TYPE (GnomePocket, gnome_pocket, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GnomePocketClient, gnome_pocket_client, G_TYPE_OBJECT);
 
-#define GNOME_POCKET_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), GNOME_TYPE_POCKET, GnomePocketPrivate))
+#define GNOME_POCKET_CLIENT_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), GNOME_TYPE_POCKET_CLIENT, GnomePocketClientPrivate))
 
-struct _GnomePocketPrivate {
+struct _GnomePocketClientPrivate {
   GCancellable   *cancellable;
   GoaClient      *client;
   GoaOAuth2Based *oauth2;
@@ -59,14 +59,14 @@ struct _GnomePocketPrivate {
 };
 
 gboolean
-gnome_pocket_refresh_finish (GnomePocket       *self,
+gnome_pocket_client_refresh_finish (GnomePocketClient       *self,
                              GAsyncResult        *res,
                              GError             **error)
 {
   GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
   gboolean ret = FALSE;
 
-  g_warn_if_fail (g_simple_async_result_get_source_tag (simple) == gnome_pocket_refresh);
+  g_warn_if_fail (g_simple_async_result_get_source_tag (simple) == gnome_pocket_client_refresh);
 
   if (!g_simple_async_result_propagate_error (simple, error))
     ret = g_simple_async_result_get_op_res_gboolean (simple);
@@ -214,7 +214,7 @@ end:
 }
 
 static void
-update_list (GnomePocket *self,
+update_list (GnomePocketClient *self,
              GList       *updated_items)
 {
   GHashTable *removed; /* key=id, value=gboolean */
@@ -283,7 +283,7 @@ update_list (GnomePocket *self,
 }
 
 static gint64
-load_since (GnomePocket *self)
+load_since (GnomePocketClient *self)
 {
   char *path;
   char *contents = NULL;
@@ -302,7 +302,7 @@ load_since (GnomePocket *self)
 }
 
 static void
-save_since (GnomePocket *self)
+save_since (GnomePocketClient *self)
 {
   char *str;
   char *path;
@@ -410,9 +410,9 @@ refresh_cb (GObject      *object,
                                     rest_proxy_call_get_payload_length (REST_PROXY_CALL (object)),
                                     NULL)) {
       GList *updated_items;
-      GnomePocket *self;
+      GnomePocketClient *self;
 
-      self = GNOME_POCKET (g_async_result_get_source_object (G_ASYNC_RESULT (simple)));
+      self = GNOME_POCKET_CLIENT (g_async_result_get_source_object (G_ASYNC_RESULT (simple)));
       updated_items = parse_json (parser, &self->priv->since, self->priv->repository);
       if (self->priv->since != 0)
         save_since (self);
@@ -429,7 +429,7 @@ refresh_cb (GObject      *object,
 }
 
 void
-gnome_pocket_refresh (GnomePocket         *self,
+gnome_pocket_client_refresh (GnomePocketClient         *self,
                       GCancellable        *cancellable,
                       GAsyncReadyCallback  callback,
                       gpointer             user_data)
@@ -444,7 +444,7 @@ gnome_pocket_refresh (GnomePocket         *self,
   simple = g_simple_async_result_new (G_OBJECT (self),
                                       callback,
                                       user_data,
-                                      gnome_pocket_refresh);
+                                      gnome_pocket_client_refresh);
 
   g_simple_async_result_set_check_cancellable (simple, cancellable);
 
@@ -470,14 +470,14 @@ gnome_pocket_refresh (GnomePocket         *self,
 }
 
 gboolean
-gnome_pocket_add_url_finish (GnomePocket   *self,
+gnome_pocket_client_add_url_finish (GnomePocketClient   *self,
                              GAsyncResult  *res,
                              GError       **error)
 {
   GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
   gboolean ret = FALSE;
 
-  g_warn_if_fail (g_simple_async_result_get_source_tag (simple) == gnome_pocket_add_url);
+  g_warn_if_fail (g_simple_async_result_get_source_tag (simple) == gnome_pocket_client_add_url);
 
   if (!g_simple_async_result_propagate_error (simple, error))
     ret = g_simple_async_result_get_op_res_gboolean (simple);
@@ -505,7 +505,7 @@ add_url_cb (GObject      *object,
 }
 
 void
-gnome_pocket_add_url (GnomePocket         *self,
+gnome_pocket_client_add_url (GnomePocketClient         *self,
                       const char          *url,
                       const char          *tweet_id,
                       GCancellable        *cancellable,
@@ -522,7 +522,7 @@ gnome_pocket_add_url (GnomePocket         *self,
   simple = g_simple_async_result_new (G_OBJECT (self),
                                       callback,
                                       user_data,
-                                      gnome_pocket_add_url);
+                                      gnome_pocket_client_add_url);
 
   g_simple_async_result_set_check_cancellable (simple, cancellable);
 
@@ -544,7 +544,7 @@ load_cached_thread (GTask           *task,
                     gpointer         task_data,
                     GCancellable    *cancellable)
 {
-  GnomePocket *self = GNOME_POCKET (source_object);
+  GnomePocketClient *self = GNOME_POCKET_CLIENT (source_object);
   GomResourceGroup *group;
   GError *error = NULL;
   guint count, i;
@@ -584,7 +584,7 @@ load_cached_thread (GTask           *task,
 }
 
 void
-gnome_pocket_load_cached (GnomePocket         *self,
+gnome_pocket_client_load_cached (GnomePocketClient         *self,
                           GCancellable        *cancellable,
                           GAsyncReadyCallback  callback,
                           gpointer             user_data)
@@ -600,7 +600,7 @@ gnome_pocket_load_cached (GnomePocket         *self,
 }
 
 gboolean
-gnome_pocket_load_cached_finish (GnomePocket         *self,
+gnome_pocket_client_load_cached_finish (GnomePocketClient         *self,
                                  GAsyncResult        *res,
                                  GError             **error)
 {
@@ -612,26 +612,26 @@ gnome_pocket_load_cached_finish (GnomePocket         *self,
 }
 
 /**
- * gnome_pocket_get_items:
- * @self: a #GnomePocket
+ * gnome_pocket_client_get_items:
+ * @self: a #GnomePocketClient
  *
  * Gets the items that Pocket knows about.
  *
  * Returns: (element-type GnomePocketItem) (transfer none): A list of
  * items or %NULL. Do not modify or free the list, it belongs to the
- * #GnomePocket object.
+ * #GnomePocketClient object.
  **/
 GList *
-gnome_pocket_get_items (GnomePocket *self)
+gnome_pocket_client_get_items (GnomePocketClient *self)
 {
   g_return_val_if_fail (self->priv->cache_loaded, NULL);
   return self->priv->items;
 }
 
 static void
-gnome_pocket_get_property (GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+gnome_pocket_client_get_property (GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
-  GnomePocket *self = GNOME_POCKET (object);
+  GnomePocketClient *self = GNOME_POCKET_CLIENT (object);
 
   switch (property_id) {
   case PROP_AVAILABLE:
@@ -644,9 +644,9 @@ gnome_pocket_get_property (GObject *object, guint property_id, GValue *value, GP
 }
 
 static void
-gnome_pocket_finalize (GObject *object)
+gnome_pocket_client_finalize (GObject *object)
 {
-  GnomePocketPrivate *priv = GNOME_POCKET (object)->priv;
+  GnomePocketClientPrivate *priv = GNOME_POCKET_CLIENT (object)->priv;
   GError *error = NULL;
 
   g_cancellable_cancel (priv->cancellable);
@@ -671,11 +671,11 @@ gnome_pocket_finalize (GObject *object)
     g_clear_object (&priv->repository);
   }
 
-  G_OBJECT_CLASS (gnome_pocket_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gnome_pocket_client_parent_class)->finalize (object);
 }
 
 static void
-gnome_pocket_class_init (GnomePocketClass *klass)
+gnome_pocket_client_class_init (GnomePocketClientClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -684,8 +684,8 @@ gnome_pocket_class_init (GnomePocketClass *klass)
     g_mkdir_with_parents (cache_path, 0700);
   }
 
-  object_class->get_property = gnome_pocket_get_property;
-  object_class->finalize = gnome_pocket_finalize;
+  object_class->get_property = gnome_pocket_client_get_property;
+  object_class->finalize = gnome_pocket_client_finalize;
 
   g_object_class_install_property (object_class,
                                    PROP_AVAILABLE,
@@ -695,7 +695,7 @@ gnome_pocket_class_init (GnomePocketClass *klass)
                                                          FALSE,
                                                          G_PARAM_READABLE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB));
 
-  g_type_class_add_private (object_class, sizeof (GnomePocketPrivate));
+  g_type_class_add_private (object_class, sizeof (GnomePocketClientPrivate));
 }
 
 static void
@@ -703,7 +703,7 @@ migrate_cb (GObject      *object,
 	    GAsyncResult *result,
 	    gpointer      user_data)
 {
-  GnomePocket *self = user_data;
+  GnomePocketClient *self = user_data;
   GomRepository *repository = (GomRepository *)object;
   GError *error = NULL;
 
@@ -723,7 +723,7 @@ open_cb (GObject      *object,
 	 GAsyncResult *result,
 	 gpointer      user_data)
 {
-  GnomePocket *self = user_data;
+  GnomePocketClient *self = user_data;
   GomAdapter *adapter = (GomAdapter *)object;
   GError *error = NULL;
   GList *object_types;
@@ -751,7 +751,7 @@ get_db_uri (void)
 }
 
 static void
-setup_database (GnomePocket *self)
+setup_database (GnomePocketClient *self)
 {
   GomAdapter *adapter;
   char *uri;
@@ -766,7 +766,7 @@ setup_database (GnomePocket *self)
 static void
 got_access_token (GObject       *object,
                   GAsyncResult  *res,
-                  GnomePocket   *self)
+                  GnomePocketClient   *self)
 {
   GError *error = NULL;
   char *access_token;
@@ -793,7 +793,7 @@ got_access_token (GObject       *object,
 }
 
 static void
-handle_accounts (GnomePocket *self)
+handle_accounts (GnomePocketClient *self)
 {
   GList *accounts, *l;
   GoaOAuth2Based *oauth2 = NULL;
@@ -837,7 +837,7 @@ handle_accounts (GnomePocket *self)
 static void
 account_added_cb (GoaClient     *client,
                   GoaObject     *object,
-                  GnomePocket *self)
+                  GnomePocketClient *self)
 {
   if (self->priv->oauth2 != NULL) {
     /* Don't care, already have an account */
@@ -850,7 +850,7 @@ account_added_cb (GoaClient     *client,
 static void
 account_changed_cb (GoaClient     *client,
                     GoaObject     *object,
-                    GnomePocket *self)
+                    GnomePocketClient *self)
 {
   GoaOAuth2Based *oauth2;
 
@@ -864,7 +864,7 @@ account_changed_cb (GoaClient     *client,
 static void
 account_removed_cb (GoaClient     *client,
                     GoaObject     *object,
-                    GnomePocket *self)
+                    GnomePocketClient *self)
 {
   GoaOAuth2Based *oauth2;
 
@@ -878,7 +878,7 @@ account_removed_cb (GoaClient     *client,
 static void
 client_ready_cb (GObject       *source_object,
                  GAsyncResult  *res,
-                 GnomePocket *self)
+                 GnomePocketClient *self)
 {
   GoaClient *client;
   GError *error = NULL;
@@ -906,11 +906,11 @@ client_ready_cb (GObject       *source_object,
 }
 
 static void
-gnome_pocket_init (GnomePocket *self)
+gnome_pocket_client_init (GnomePocketClient *self)
 {
   g_assert (cache_path);
 
-  self->priv = GNOME_POCKET_GET_PRIVATE (self);
+  self->priv = GNOME_POCKET_CLIENT_GET_PRIVATE (self);
   self->priv->cancellable = g_cancellable_new ();
   self->priv->proxy = rest_proxy_new ("https://getpocket.com/", FALSE);
 
@@ -919,16 +919,16 @@ gnome_pocket_init (GnomePocket *self)
 }
 
 /**
- * gnome_pocket_new:
+ * gnome_pocket_client_new:
  *
- * Creates a new #GnomePocket object.
+ * Creates a new #GnomePocketClient object.
  *
- * Returns: (transfer full): a new #GnomePocket object. Use g_object_unref() when done.
+ * Returns: (transfer full): a new #GnomePocketClient object. Use g_object_unref() when done.
  **/
-GnomePocket *
-gnome_pocket_new (void)
+GnomePocketClient *
+gnome_pocket_client_new (void)
 {
-  return g_object_new (GNOME_TYPE_POCKET, NULL);
+  return g_object_new (GNOME_TYPE_POCKET_CLIENT, NULL);
 }
 
 /*

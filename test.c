@@ -1,16 +1,15 @@
 #include <locale.h>
 
 #include <gnome-pocket/gnome-pocket.h>
-#include <gnome-pocket/gnome-pocket-item.h>
 
 static GMainLoop *loop = NULL;
 
 static void
-print_items (GnomePocket *pocket)
+print_items (GnomePocketClient *pocket)
 {
 	GList *items, *l;
 
-	items = gnome_pocket_get_items (pocket);
+	items = gnome_pocket_client_get_items (pocket);
 	for (l = items; l != NULL; l = l->next) {
 		GnomePocketItem *item = l->data;
 
@@ -27,10 +26,10 @@ refresh_cb (GObject *object,
 
 	g_message ("finished a refresh");
 
-	ret = gnome_pocket_refresh_finish (GNOME_POCKET (object), res, NULL);
+	ret = gnome_pocket_client_refresh_finish (GNOME_POCKET_CLIENT (object), res, NULL);
 	g_message ("refresh_cb: %d", ret);
 
-	print_items (GNOME_POCKET (object));
+	print_items (GNOME_POCKET_CLIENT (object));
 
 	g_main_loop_quit (loop);
 }
@@ -42,19 +41,19 @@ cached_cb (GObject *object,
 {
 	gboolean ret;
 
-	ret = gnome_pocket_load_cached_finish (GNOME_POCKET (object), res, NULL);
+	ret = gnome_pocket_client_load_cached_finish (GNOME_POCKET_CLIENT (object), res, NULL);
 	if (!ret) {
 		g_message ("Failed to load the cached data");
 		return;
 	}
 
 #if 0
-	print_items (GNOME_POCKET (object));
+	print_items (GNOME_POCKET_CLIENT (object));
 	g_main_loop_quit (loop);
 	return;
 #endif
 	g_message ("launching a refresh");
-	gnome_pocket_refresh (GNOME_POCKET (object),
+	gnome_pocket_client_refresh (GNOME_POCKET_CLIENT (object),
 			      NULL,
 			      refresh_cb,
 			      NULL);
@@ -73,7 +72,7 @@ is_available (GObject    *gobject,
 	}
 
 	g_message ("Loading cached data");
-	gnome_pocket_load_cached (GNOME_POCKET (user_data),
+	gnome_pocket_client_load_cached (GNOME_POCKET_CLIENT (user_data),
 				  NULL,
 				  cached_cb,
 				  NULL);
@@ -81,14 +80,14 @@ is_available (GObject    *gobject,
 
 int main (int argc, char **argv)
 {
-	GnomePocket *pocket;
+	GnomePocketClient *pocket;
 
 	setlocale (LC_ALL, "");
 
 	g_set_prgname ("org.gnome.Pocket.test");
 
 	loop = g_main_loop_new (NULL, FALSE);
-	pocket = gnome_pocket_new ();
+	pocket = gnome_pocket_client_new ();
 	g_signal_connect (pocket, "notify::available",
 			  G_CALLBACK (is_available), pocket);
 

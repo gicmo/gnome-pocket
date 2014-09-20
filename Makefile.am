@@ -26,7 +26,8 @@ libgnome_pocket_la_LIBADD = $(GNOME_POCKET_LIBS)
 libgnome_pocket_la_LDFLAGS = -avoid-version
 libgnome_pocket_la_SOURCES =				\
 	gnome-pocket/gnome-pocket.h			\
-	gnome-pocket/gnome-pocket.c			\
+	gnome-pocket/gnome-pocket-client.h		\
+	gnome-pocket/gnome-pocket-client.c		\
 	gnome-pocket/gnome-pocket-item.h		\
 	gnome-pocket/gnome-pocket-item.c
 
