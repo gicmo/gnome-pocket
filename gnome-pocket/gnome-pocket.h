@@ -48,7 +48,7 @@ struct _GnomePocketClass
   GObjectClass parent;
 };
 
-GType              gnome_pocket_get_type        (void);
+GType              gnome_pocket_get_type        (void) G_GNUC_CONST;
 
 GnomePocket       *gnome_pocket_new             (void);
 void               gnome_pocket_add_url         (GnomePocket         *self,
