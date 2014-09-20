@@ -31,20 +31,22 @@ G_BEGIN_DECLS
 #define GNOME_IS_POCKET_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GNOME_TYPE_POCKET))
 #define GNOME_POCKET_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GNOME_TYPE_POCKET, GnomePocketClass))
 
+typedef struct _GnomePocketClass   GnomePocketClass;
+typedef struct _GnomePocket        GnomePocket;
 typedef struct _GnomePocketPrivate GnomePocketPrivate;
 
-typedef struct
+struct _GnomePocket
 {
   GObject parent;
 
   /*< private >*/
   GnomePocketPrivate *priv;
-} GnomePocket;
+};
 
-typedef struct
+struct _GnomePocketClass
 {
   GObjectClass parent;
-} GnomePocketClass;
+};
 
 GType              gnome_pocket_get_type        (void);
 
