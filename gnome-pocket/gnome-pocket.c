@@ -679,10 +679,10 @@ gnome_pocket_class_init (GnomePocketClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  g_assert (g_get_prgname ());
-
-  cache_path = g_build_filename (g_get_user_cache_dir (), g_get_prgname (), NULL);
-  g_mkdir_with_parents (cache_path, 0700);
+  if (g_get_prgname ()) {
+    cache_path = g_build_filename (g_get_user_cache_dir (), g_get_prgname (), NULL);
+    g_mkdir_with_parents (cache_path, 0700);
+  }
 
   object_class->get_property = gnome_pocket_get_property;
   object_class->finalize = gnome_pocket_finalize;
@@ -908,6 +908,8 @@ client_ready_cb (GObject       *source_object,
 static void
 gnome_pocket_init (GnomePocket *self)
 {
+  g_assert (cache_path);
+
   self->priv = GNOME_POCKET_GET_PRIVATE (self);
   self->priv->cancellable = g_cancellable_new ();
   self->priv->proxy = rest_proxy_new ("https://getpocket.com/", FALSE);
