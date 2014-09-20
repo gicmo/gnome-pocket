@@ -60,8 +60,8 @@ struct _GnomePocketClientPrivate {
 
 gboolean
 gnome_pocket_client_refresh_finish (GnomePocketClient       *self,
-                             GAsyncResult        *res,
-                             GError             **error)
+                                    GAsyncResult        *res,
+                                    GError             **error)
 {
   GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
   gboolean ret = FALSE;
@@ -279,7 +279,7 @@ end:
 
 static void
 update_list (GnomePocketClient *self,
-             GList       *updated_items)
+             GList             *updated_items)
 {
   GHashTable *removed; /* key=id, value=gboolean */
   GList *added;
@@ -458,10 +458,10 @@ refresh_cb (GObject      *object,
 }
 
 void
-gnome_pocket_client_refresh (GnomePocketClient         *self,
-                      GCancellable        *cancellable,
-                      GAsyncReadyCallback  callback,
-                      gpointer             user_data)
+gnome_pocket_client_refresh (GnomePocketClient    *self,
+                             GCancellable         *cancellable,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data)
 {
   RestProxyCall *call;
   GSimpleAsyncResult *simple;
@@ -500,8 +500,8 @@ gnome_pocket_client_refresh (GnomePocketClient         *self,
 
 gboolean
 gnome_pocket_client_add_url_finish (GnomePocketClient   *self,
-                             GAsyncResult  *res,
-                             GError       **error)
+                                    GAsyncResult        *res,
+                                    GError             **error)
 {
   GSimpleAsyncResult *simple = G_SIMPLE_ASYNC_RESULT (res);
   gboolean ret = FALSE;
@@ -534,12 +534,12 @@ add_url_cb (GObject      *object,
 }
 
 void
-gnome_pocket_client_add_url (GnomePocketClient         *self,
-                      const char          *url,
-                      const char          *tweet_id,
-                      GCancellable        *cancellable,
-                      GAsyncReadyCallback  callback,
-                      gpointer             user_data)
+gnome_pocket_client_add_url (GnomePocketClient   *self,
+                             const char          *url,
+                             const char          *tweet_id,
+                             GCancellable        *cancellable,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data)
 {
   RestProxyCall *call;
   GSimpleAsyncResult *simple;
@@ -613,10 +613,10 @@ load_cached_thread (GTask           *task,
 }
 
 void
-gnome_pocket_client_load_cached (GnomePocketClient         *self,
-                          GCancellable        *cancellable,
-                          GAsyncReadyCallback  callback,
-                          gpointer             user_data)
+gnome_pocket_client_load_cached (GnomePocketClient   *self,
+                                 GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
 {
   GTask *task;
 
@@ -629,9 +629,9 @@ gnome_pocket_client_load_cached (GnomePocketClient         *self,
 }
 
 gboolean
-gnome_pocket_client_load_cached_finish (GnomePocketClient         *self,
-                                 GAsyncResult        *res,
-                                 GError             **error)
+gnome_pocket_client_load_cached_finish (GnomePocketClient   *self,
+                                        GAsyncResult        *res,
+                                        GError             **error)
 {
   GTask *task = G_TASK (res);
 
@@ -793,8 +793,8 @@ setup_database (GnomePocketClient *self)
 }
 
 static void
-got_access_token (GObject       *object,
-                  GAsyncResult  *res,
+got_access_token (GObject             *object,
+                  GAsyncResult        *res,
                   GnomePocketClient   *self)
 {
   GError *error = NULL;
@@ -864,8 +864,8 @@ handle_accounts (GnomePocketClient *self)
 }
 
 static void
-account_added_cb (GoaClient     *client,
-                  GoaObject     *object,
+account_added_cb (GoaClient         *client,
+                  GoaObject         *object,
                   GnomePocketClient *self)
 {
   if (self->priv->oauth2 != NULL) {
@@ -877,8 +877,8 @@ account_added_cb (GoaClient     *client,
 }
 
 static void
-account_changed_cb (GoaClient     *client,
-                    GoaObject     *object,
+account_changed_cb (GoaClient         *client,
+                    GoaObject         *object,
                     GnomePocketClient *self)
 {
   GoaOAuth2Based *oauth2;
@@ -891,8 +891,8 @@ account_changed_cb (GoaClient     *client,
 }
 
 static void
-account_removed_cb (GoaClient     *client,
-                    GoaObject     *object,
+account_removed_cb (GoaClient         *client,
+                    GoaObject         *object,
                     GnomePocketClient *self)
 {
   GoaOAuth2Based *oauth2;
@@ -905,8 +905,8 @@ account_removed_cb (GoaClient     *client,
 }
 
 static void
-client_ready_cb (GObject       *source_object,
-                 GAsyncResult  *res,
+client_ready_cb (GObject           *source_object,
+                 GAsyncResult      *res,
                  GnomePocketClient *self)
 {
   GoaClient *client;
