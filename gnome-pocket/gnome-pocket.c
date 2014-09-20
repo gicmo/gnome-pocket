@@ -611,6 +611,16 @@ gnome_pocket_load_cached_finish (GnomePocket         *self,
   return g_task_propagate_boolean (task, error);
 }
 
+/**
+ * gnome_pocket_get_items:
+ * @self: a #GnomePocket
+ *
+ * Gets the items that Pocket knows about.
+ *
+ * Returns: (element-type GnomePocketItem) (transfer none): A list of
+ * items or %NULL. Do not modify or free the list, it belongs to the
+ * #GnomePocket object.
+ **/
 GList *
 gnome_pocket_get_items (GnomePocket *self)
 {
@@ -906,6 +916,13 @@ gnome_pocket_init (GnomePocket *self)
                   (GAsyncReadyCallback) client_ready_cb, self);
 }
 
+/**
+ * gnome_pocket_new:
+ *
+ * Creates a new #GnomePocket object.
+ *
+ * Returns: (transfer full): a new #GnomePocket object. Use g_object_unref() when done.
+ **/
 GnomePocket *
 gnome_pocket_new (void)
 {
