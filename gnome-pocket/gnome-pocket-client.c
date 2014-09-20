@@ -74,6 +74,70 @@ gnome_pocket_client_refresh_finish (GnomePocketClient       *self,
   return ret;
 }
 
+static gint64
+get_since (GnomePocketClient *self)
+{
+  GomAdapter *adapter;
+  GomCommand *command;
+  GomCursor *cursor;
+  gint64 since = 0;
+
+  adapter = gom_repository_get_adapter (self->priv->repository);
+  command = g_object_new (GOM_TYPE_COMMAND,
+                          "adapter", adapter,
+                          "sql", "CREATE TABLE IF NOT EXISTS _since (time INTEGER);",
+                          NULL);
+  if (!gom_command_execute (command, NULL, NULL)) {
+    g_object_unref (command);
+    return since;
+  }
+  g_object_unref (command);
+
+  command = g_object_new (GOM_TYPE_COMMAND,
+                          "adapter", adapter,
+                          "sql", "SELECT MAX(time) FROM _since;",
+                          NULL);
+  if (!gom_command_execute (command, &cursor, NULL)) {
+    g_object_unref (command);
+    return since;
+  }
+
+  if (!gom_cursor_next (cursor)) {
+    g_object_unref (cursor);
+    g_object_unref (command);
+    return since;
+  }
+
+  since = gom_cursor_get_column_uint (cursor, 0);
+  g_object_unref (cursor);
+  g_object_unref (command);
+
+  return since;
+}
+
+static void
+set_since (GnomePocketClient *self,
+           gint64             since)
+{
+  GomCommand *command;
+  GomAdapter *adapter;
+  GError *error = NULL;
+
+  adapter = gom_repository_get_adapter (self->priv->repository);
+  command = g_object_new (GOM_TYPE_COMMAND,
+                          "adapter", adapter,
+                          "sql", "INSERT INTO _since ("
+                          " time"
+                          ") VALUES (?);",
+                          NULL);
+  gom_command_set_param_uint (command, 0, since);
+  if (!gom_command_execute (command, NULL, &error)) {
+    g_warning ("Failed to save 'since' time: %s", error->message);
+    g_error_free (error);
+  }
+  g_object_unref (command);
+}
+
 /* FIXME */
 static char *cache_path = NULL;
 
@@ -282,41 +346,6 @@ update_list (GnomePocketClient *self,
   g_hash_table_destroy (removed);
 }
 
-static gint64
-load_since (GnomePocketClient *self)
-{
-  char *path;
-  char *contents = NULL;
-  gint64 since = 0;
-
-  path = g_build_filename (cache_path, "since", NULL);
-  g_file_get_contents (path, &contents, NULL, NULL);
-  g_free (path);
-
-  if (contents != NULL) {
-    since = g_ascii_strtoll (contents, NULL, 0);
-    g_free (contents);
-  }
-
-  return since;
-}
-
-static void
-save_since (GnomePocketClient *self)
-{
-  char *str;
-  char *path;
-
-  if (self->priv->since == 0)
-    return;
-
-  str = g_strdup_printf ("%" G_GINT64_FORMAT, self->priv->since);
-  path = g_build_filename (cache_path, "since", NULL);
-  g_file_set_contents (path, str, -1, NULL);
-  g_free (path);
-  g_free (str);
-}
-
 static int
 sort_items (gconstpointer a,
 	    gconstpointer b)
@@ -415,7 +444,7 @@ refresh_cb (GObject      *object,
       self = GNOME_POCKET_CLIENT (g_async_result_get_source_object (G_ASYNC_RESULT (simple)));
       updated_items = parse_json (parser, &self->priv->since, self->priv->repository);
       if (self->priv->since != 0)
-        save_since (self);
+        set_since (self, self->priv->since);
       update_list (self, updated_items);
       g_object_unref (self);
     }
@@ -549,7 +578,7 @@ load_cached_thread (GTask           *task,
   GError *error = NULL;
   guint count, i;
 
-  self->priv->since = load_since (self);
+  self->priv->since = get_since (self);
 
   group = gom_repository_find_sync (self->priv->repository,
 				    GNOME_TYPE_POCKET_ITEM,
