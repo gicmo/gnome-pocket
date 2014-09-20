@@ -22,9 +22,9 @@ else
 pkglib_LTLIBRARIES = gnome-pocket.la
 endif
 
-gnome-pocket_la_LIBADD = $(GNOME_POCKET_LIBS)
-gnome-pocket_la_LDFLAGS = -avoid-version
-gnome-pocket_la_SOURCES =				\
+gnome_pocket_la_LIBADD = $(GNOME_POCKET_LIBS)
+gnome_pocket_la_LDFLAGS = -avoid-version
+gnome_pocket_la_SOURCES =				\
 	gnome-pocket/gnome-pocket.h			\
 	gnome-pocket/gnome-pocket.c			\
 	gnome-pocket/gnome-pocket-item.h		\
@@ -55,7 +55,7 @@ GnomePocket_1_0_gir_SCANNERFLAGS =			\
         --c-include="gnome-pocket/gnome-pocket.h"	\
        $(NULL)
 GnomePocket_1_0_gir_INCLUDES = $(GNOME_POCKET_GIR_INCLUDES)
-GnomePocket_1_0_gir_FILES = $(nodist_gnome-pocket_la_SOURCES)
+GnomePocket_1_0_gir_FILES = $(nodist_gnome_pocket_la_SOURCES)
 
 if GNOME_POCKET_STATIC
 noinst_DATA += $(srcdir)/GnomePocket-1.0.gir
