@@ -50,8 +50,8 @@ GnomePocket_1_0_gir_LIBS = libgnome-pocket.la
 GnomePocket_1_0_gir_CFLAGS = $(AM_CPPFLAGS)
 GnomePocket_1_0_gir_SCANNERFLAGS =			\
        --warn-all					\
-       --symbol-prefix=gnome_pocket			\
-       --identifier-prefix=GnomePocket			\
+       --symbol-prefix=gnome				\
+       --identifier-prefix=Gnome			\
         --c-include="gnome-pocket/gnome-pocket.h"	\
        $(NULL)
 GnomePocket_1_0_gir_INCLUDES = $(GNOME_POCKET_GIR_INCLUDES)
