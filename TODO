@@ -2,3 +2,4 @@
 - Save "since" in the database, not in a separate file
 - Add function to archive or delete item
 - Add support for offline operations
+- Add excerpt? word_count? authors? videos? images?
