@@ -34,17 +34,17 @@
 #include "gnome-pocket-item.h"
 
 struct _GnomePocketItemPrivate {
-  char                  *id;
-  char                  *url;
-  char                  *title;
-  char                  *thumbnail_url;
-  gboolean               favorite;
-  PocketItemStatus       status;
-  gboolean               is_article;
-  PocketMediaInclusion   has_image;
-  PocketMediaInclusion   has_video;
-  gint64                 time_added;
-  char                 **tags;
+  char                       *id;
+  char                       *url;
+  char                       *title;
+  char                       *thumbnail_url;
+  gboolean                    favorite;
+  GnomePocketItemStatus       status;
+  gboolean                    is_article;
+  GnomePocketMediaInclusion   has_image;
+  GnomePocketMediaInclusion   has_video;
+  gint64                      time_added;
+  char                      **tags;
 };
 
 G_DEFINE_TYPE(GnomePocketItem, gnome_pocket_item, GOM_TYPE_RESOURCE)
@@ -84,14 +84,14 @@ bool_to_str (gboolean b)
 }
 
 static const char *
-inclusion_to_str (PocketMediaInclusion inc)
+inclusion_to_str (GnomePocketMediaInclusion inc)
 {
   switch (inc) {
-  case POCKET_HAS_MEDIA_FALSE:
+  case GNOME_POCKET_HAS_MEDIA_FALSE:
     return "False";
-  case POCKET_HAS_MEDIA_INCLUDED:
+  case GNOME_POCKET_HAS_MEDIA_INCLUDED:
     return "Included";
-  case POCKET_IS_MEDIA:
+  case GNOME_POCKET_IS_MEDIA:
     return "Is media";
   default:
     g_assert_not_reached ();
@@ -257,7 +257,7 @@ gnome_pocket_item_class_init (GnomePocketItemClass *klass)
                                    g_param_spec_uint ("status",
                                                       "Status",
                                                       NULL,
-                                                      POCKET_STATUS_NORMAL, POCKET_STATUS_DELETED, POCKET_STATUS_NORMAL,
+                                                      GNOME_POCKET_STATUS_NORMAL, GNOME_POCKET_STATUS_DELETED, GNOME_POCKET_STATUS_NORMAL,
 						      G_PARAM_READWRITE));
 
   BOOL_PROP ("is-article", PROP_IS_ARTICLE);
@@ -268,7 +268,7 @@ gnome_pocket_item_class_init (GnomePocketItemClass *klass)
                                    g_param_spec_uint ("has-image",
                                                       "Has image",
                                                       NULL,
-                                                      POCKET_HAS_MEDIA_FALSE, POCKET_IS_MEDIA, POCKET_HAS_MEDIA_FALSE,
+                                                      GNOME_POCKET_HAS_MEDIA_FALSE, GNOME_POCKET_IS_MEDIA, GNOME_POCKET_HAS_MEDIA_FALSE,
 						      G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
@@ -276,7 +276,7 @@ gnome_pocket_item_class_init (GnomePocketItemClass *klass)
                                    g_param_spec_uint ("has-video",
                                                       "Has video",
                                                       NULL,
-                                                      POCKET_HAS_MEDIA_FALSE, POCKET_IS_MEDIA, POCKET_HAS_MEDIA_FALSE,
+                                                      GNOME_POCKET_HAS_MEDIA_FALSE, GNOME_POCKET_IS_MEDIA, GNOME_POCKET_HAS_MEDIA_FALSE,
 						      G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,

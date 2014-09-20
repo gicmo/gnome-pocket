@@ -132,9 +132,9 @@ parse_item (JsonReader    *reader,
 {
   GObject *item;
   char *str;
-  PocketItemStatus status;
+  GnomePocketItemStatus status;
   gboolean favorite, is_article;
-  PocketMediaInclusion has_image, has_video;
+  GnomePocketMediaInclusion has_image, has_video;
   gint64 time_added;
   char **tags;
 
@@ -152,7 +152,7 @@ parse_item (JsonReader    *reader,
    * anything more here */
   status = get_int_for_element (reader, "status");
   g_object_set (item, "status", status, NULL);
-  if (status != POCKET_STATUS_NORMAL)
+  if (status != GNOME_POCKET_STATUS_NORMAL)
     goto end;
 
   str = get_string_for_element (reader, "resolved_url");
@@ -175,10 +175,10 @@ parse_item (JsonReader    *reader,
     is_article = FALSE;
   has_image = get_int_for_element (reader, "has_image");
   if (has_image == -1)
-    has_image = POCKET_HAS_MEDIA_FALSE;
+    has_image = GNOME_POCKET_HAS_MEDIA_FALSE;
   has_video = get_int_for_element (reader, "has_video");
   if (has_video == -1)
-    has_video = POCKET_HAS_MEDIA_FALSE;
+    has_video = GNOME_POCKET_HAS_MEDIA_FALSE;
   g_object_set (item,
 		"favorite", favorite,
 		"is-article", is_article,
@@ -230,14 +230,14 @@ update_list (GnomePocket *self,
   added = NULL;
   for (l = updated_items; l != NULL; l = l->next) {
     GnomePocketItem *item = l->data;
-    PocketItemStatus status;
+    GnomePocketItemStatus status;
     char *id;
 
     g_object_get (G_OBJECT (item),
 		  "status", &status,
 		  "id", &id, NULL);
 
-    if (status != POCKET_STATUS_NORMAL) {
+    if (status != GNOME_POCKET_STATUS_NORMAL) {
       g_hash_table_insert (removed,
                            id,
                            GINT_TO_POINTER (1));
