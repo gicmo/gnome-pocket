@@ -3,3 +3,4 @@
 - Add function to archive or delete item
 - Add support for offline operations
 - Add excerpt? word_count? authors? videos? images?
+- Do cache_path work in g_thread_once()
