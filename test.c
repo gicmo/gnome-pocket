@@ -1,7 +1,7 @@
 #include <locale.h>
 
-#include "gnome-pocket.h"
-#include "gnome-pocket-item.h"
+#include <gnome-pocket/gnome-pocket.h>
+#include <gnome-pocket/gnome-pocket-item.h>
 
 static GMainLoop *loop = NULL;
 
